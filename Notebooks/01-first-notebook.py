@@ -49,6 +49,37 @@ def _():
     return (mo,)
 
 
+@app.cell
+def _():
+    1+3
+    return
+
+
+@app.cell
+def _():
+    print("hello world!")
+    return
+
+
+app._unparsable_cell(
+    r"""
+    ```python
+    print(f"There are {len(freight_charges)} charges in freight_charges.")
+    ```
+
+    This reuses the existing `freight_charges` variable from an earlier cell — no need to redefine it, just reference it here.
+    """,
+    name="_"
+)
+
+
+@app.cell
+def _(freight_charges):
+    print(f"There are {len(freight_charges)} charges in freight_charges.")
+
+    return
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
@@ -96,8 +127,26 @@ def _(mo):
 @app.cell
 def _():
     freight_charges = [16.75, 22.25, 25.00, 20.25, 36.25]
-    freight_charges
+
     return (freight_charges,)
+
+
+@app.cell
+def _(freight_charges):
+    freight_charges
+    return
+
+
+@app.cell
+def _(freight_charges):
+    print(freight_charges)
+    return
+
+
+@app.cell
+def _(total):
+    total
+    return
 
 
 @app.cell(hide_code=True)
@@ -118,6 +167,30 @@ def _(mo):
     *The number in brackets is an **index**, and Python counts from zero, so
     `freight_charges[0]` is the first one.*
     """)
+    return
+
+
+@app.cell
+def _(freight_charges):
+    freight_charges[0]
+    return
+
+
+@app.cell
+def _(freight_charges):
+    len(freight_charges)
+    return
+
+
+@app.cell
+def _(freight_charges):
+    total = sum(freight_charges)
+    return (total,)
+
+
+@app.cell
+def _(total):
+    print(total)
     return
 
 
@@ -145,6 +218,30 @@ def _(mo):
     typing inside one cell. Use the **undo** button at the bottom right, which stays
     there until you close the notebook, or `Ctrl+K` and search for undo.*
     """)
+    return
+
+
+@app.cell
+def _():
+    print("Experiment 1: I believe all three cells will change to match the 999.99 the sum will add 999.99 instead of 16.75 because all three reference the same cell that refernces 999.99")
+    return
+
+
+@app.cell
+def _():
+    print("Experiment 2: I believe that these cells will be incomplete or empty due to the lack of sufficient data provided.")
+    return
+
+
+@app.cell
+def _():
+    print("Experiment 3: I think that it will say that this is not true or define it as an error. I just tested it and it said that its redefined by other cells and said that cell could not run")
+    return
+
+
+@app.cell
+def _():
+    print("Experiment 4: I believe that it will not run as it requires that cell to refer to and complete its code or command")
     return
 
 
