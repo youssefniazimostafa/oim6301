@@ -76,7 +76,6 @@ app._unparsable_cell(
 @app.cell
 def _(freight_charges):
     print(f"There are {len(freight_charges)} charges in freight_charges.")
-
     return
 
 
@@ -127,7 +126,6 @@ def _(mo):
 @app.cell
 def _():
     freight_charges = [16.75, 22.25, 25.00, 20.25, 36.25]
-
     return (freight_charges,)
 
 
@@ -303,6 +301,109 @@ def _(mo):
     return
 
 
+@app.cell
+def _(freight_charges):
+    freight_charges[-1]
+    return
+
+
+@app.cell
+def _():
+    print("Experiment 1: I did not know what this would pull up. It pulls up the last item in the list [-2] would pull up the second last and so on.")
+    return
+
+
+@app.cell
+def _(freight_charges):
+    freight_charges[:3]
+    return
+
+
+@app.cell
+def _():
+    print(" Experiement 2: This will pull up values 0-2 as it requests the values that fall before 3")
+    return
+
+
+@app.cell
+def _(orders):
+    orders[0]
+    return
+
+
+@app.cell
+def _(freight_charges):
+    freight_charges[0]
+    return
+
+
+@app.cell
+def _():
+    print("Experiment 3: I thought that these would both bring up the first value in their respective lists and they did. That is what I assume the coorelation is.")
+    return
+
+
+@app.cell
+def _():
+    catagory = "Confections"
+    len(catagory)
+    return
+
+
+@app.cell
+def _():
+    print("Experiment 4: I was not able to find where it counted 5 items but when I did the following code the len(catagory) counts the number of letters in the word Confections when doing catagory = Confections")
+    return
+
+
+@app.cell
+def _(orders):
+    sum(orders)
+    return
+
+
+@app.cell
+def _():
+    print("Experiment 5: I assumed it would give me the sum of all the values in the orders list and it did")
+    return
+
+
+@app.cell
+def _(orders):
+    orders * 2
+    return
+
+
+@app.cell
+def _(freight_charges, orders):
+    orders + freight_charges
+    return
+
+
+@app.cell
+def _():
+    print("Experiment 6: The first command repeats the list twice in a row 0-4 is the same list as 5-9. For the second list it just puts the orders list as 0-4 and the Frieght Charges list as 5-9")
+    return
+
+
+@app.cell
+def _(freight_charges):
+    sorted(freight_charges)
+    return
+
+
+@app.cell
+def _(freight_charges):
+    sorted(freight_charges, reverse=True)
+    return
+
+
+@app.cell
+def _():
+    print("Experiment 7: The sorted command put the freght charges in its natural order. The reverse=true command reversed the order of the list. Neither command changed the original list of freight charges")
+    return
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
@@ -317,6 +418,12 @@ def _(mo):
 @app.cell
 def _(freight_charges, orders):
     [type(freight_charges[0]), type(orders[0]), type("Confections"), type(freight_charges[0] > 20)]
+    return
+
+
+@app.cell
+def _():
+    print("value 0 of freight charges is a number with a decimal (float), for orders its a whole number (int), for Confections its text  (str), for freight charges [0] > 20 its true or false [bool]")
     return
 
 
@@ -340,6 +447,24 @@ def _(mo):
     1. `"16.75" + "22.25"`
     2. `16.75 + "22.25"`
     """)
+    return
+
+
+@app.cell
+def _():
+    "16.75" + "22.25"
+    return
+
+
+@app.cell
+def _():
+    16.75 + "22.25"
+    return
+
+
+@app.cell
+def _():
+    print("first command treats them as text (str), there fore they dont add they are just printed next to eachother, the second one is an error because the first value is a number with a decimal (float) and the second is text (str), therefore they cant be added as different types")
     return
 
 
@@ -374,6 +499,43 @@ def _(mo):
 
     📖 Handbook: Python §3 Expressions and operators
     """)
+    return
+
+
+@app.cell
+def _(freight_charges):
+    freight_charges[0] > 20
+    return
+
+
+@app.cell
+def _():
+    print("Experiment 1: it is not as this was a bool type which states whether its true or false and it became false")
+    return
+
+
+@app.cell
+def _(freight_charges):
+    freight_charges[-1] == max(freight_charges)
+    return
+
+
+@app.cell
+def _():
+    print("Experiment 2: The last charge is indeed the largest charge")
+    return
+
+
+@app.cell
+def _(freight_charges):
+    type(freight_charges[0] > 20)
+    type(freight_charges[-1] == max(freight_charges))
+    return
+
+
+@app.cell
+def _():
+    print("Experiment 3: THey are both bool types meaning true or false questions")
     return
 
 
@@ -412,6 +574,24 @@ def _(mo):
 
     Your sentence should show `$120.50` and `$24.10`. If it does not, the experiments above left something changed: check that `freight_charges` still starts with `16.75` and that your `total` cell is still there.
     """)
+    return
+
+
+@app.cell
+def _(total):
+    total
+    return
+
+
+@app.cell
+def _(freight_charges, total):
+    total / len(freight_charges)
+    return
+
+
+@app.cell
+def _(freight_charges, total):
+    print(f"Total Freight = {total:.2f}, Average Charge = {total / len(freight_charges):.2f}")
     return
 
 
@@ -465,6 +645,22 @@ def _(mo):
     return
 
 
+@app.cell
+def _(freight_charges):
+    below_25 = []
+    for charg in freight_charges:
+        if charg < 25:
+            below_25.append(charg)
+    below_25
+    return (below_25,)
+
+
+@app.cell
+def _(below_25):
+    print(f"there are {len(below_25)} charges {below_25}, they add up to {sum(below_25):.2f}$")
+    return
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
@@ -480,6 +676,12 @@ def _(mo):
 
     📖 Handbook: Python §10 Reading a traceback
     """)
+    return
+
+
+@app.cell
+def _():
+    print("List only goes 0-4 value 5 does not exist")
     return
 
 
@@ -506,11 +708,49 @@ def _(mo):
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
+    There was no module named pandsa because of the type therefore it cannot be imported
+    """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    There is no file in my directory that is called sales.csv therefore it was not able to open it
+    """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    There error states that the brackets were never closed so it coukd not execute the whole function
+    """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
     # 🙋 A Line That Does Not Break
 
     Write down what this gives, then run it in a cell of your own.
 
     `max(["9.50", "16.75", "22.25"])`
+    """)
+    return
+
+
+@app.cell
+def _():
+    max(["9.50", "16.75", "22.25"])
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    Usually I would expect for 22.25 to be selected as the max in this list of numbers but when you put the quotations around them they are treated as text and not values therefore it takes the first number of each of the text (9, 1, 2) and since 9 is sorted last as text it determines it the maximum as they are all text not numerical values.
     """)
     return
 
@@ -525,6 +765,20 @@ def _(mo):
     The three values are text, so Python compares them as text, one character at a time. `"9"` comes after `"2"` and `"1"`, so `"9.50"` counts as the largest. Written as numbers, `max([9.50, 16.75, 22.25])` returns `22.25`.
 
     📖 Handbook: Python §2 Types
+    """)
+    return
+
+
+@app.cell
+def _():
+    max([9.50, 16.75, 22.25])
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    Without quotations they determine 22.25 as the max as it is the numerical max
     """)
     return
 
@@ -564,6 +818,30 @@ def _(mo):
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
+    1) The error states line 3
+    """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    2) I would change line one as one of the variables has quotations it saying "pending", this makes it a text not a numerical value like the others meaning line 3 which is aking for the sum of the list cannot be calculated as they are two different types. float (number with decimal) vs str (text)
+    """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    3) I would change pending to a value without quotations so that all functions below can successfully run. within this specific document you would only need to run print(total) as freight_charges already has a viable list and i have already written total = sum(freight_charges) there for print(total) will just print the total with the complete list. But replacing pending with a float type variable such as 25 (freight_charges[2]) from the original list would allow for sum and total = to compute and make print(total) functional.
+    """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
     # ✏️ The List as a Bar Chart
 
     > **Advanced.** Nothing later depends on this, and nothing asks you to do it.
@@ -587,6 +865,17 @@ def _(mo):
 
     The square brackets inside `_ax.bar(...)` are a **list comprehension**, which **iterates** over `orders` and turns each number into text.
     """)
+    return
+
+
+@app.cell
+def _(freight_charges, orders):
+    import matplotlib.pyplot as plt
+
+    _fig, _ax = plt.subplots(figsize=(6, 2.6))
+    _ax.bar([str(_o) for _o in orders], freight_charges)
+    _ax.set_ylabel("freight")
+    _fig
     return
 
 
