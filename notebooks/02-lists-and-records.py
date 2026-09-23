@@ -90,14 +90,73 @@ def _():
 def _():
     costs = input('Enter the cost:')
     taxs = input('Enter the tax:')
+    costs = float(costs)
+
+    return (costs,)
 
 
+@app.cell
+def _(costs):
+    costs * 10
     return
 
 
 @app.cell
 def _(cost):
     type(cost)
+    return
+
+
+@app.cell
+def _():
+    freight_charges = [16.75, 22.25, 25.00, 18.50, 30.00, 12.99]
+    return (freight_charges,)
+
+
+@app.cell
+def _(freight_charges):
+    freight_charges[0]
+    return
+
+
+@app.cell
+def _(freight_charges):
+    freight_charges[1]
+    return
+
+
+@app.cell
+def _(freight_charges):
+    freight_charges[2]
+    return
+
+
+@app.cell
+def _(freight_charges):
+    freight_charges[-3]
+    return
+
+
+@app.cell
+def _(freight_charges):
+    freight_charges[1:4]
+    return
+
+
+@app.cell
+def _(freight_charges):
+    for charge in freight_charges:
+        freight_tax = charge * 0.0625
+        total_charge =  charge + freight_tax
+        print(f'Total Charge is ${total_charge:.2f}.')
+    return
+
+
+@app.cell
+def _(freight_charges):
+    for charges in freight_charges:
+        if charges < 25:
+            print(charges)
     return
 
 
@@ -254,6 +313,21 @@ def _():
         print("Pass")
     elif score >= 90:
         print("A")
+    return
+
+
+@app.cell
+def _():
+    score = 81
+
+    if score >= 90:
+        print("A")
+    elif score >= 80:
+        print("B")
+    elif score >= 60:
+        print("Pass")
+    else:
+        print("Fail")
     return
 
 
