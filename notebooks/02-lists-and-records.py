@@ -82,7 +82,6 @@ def _():
     tax = 3.25
     total_cost = float(cost) + float(tax)
     print(f'the cost is {cost}$. Total is {total_cost:.2f}$.')
-
     return (cost,)
 
 
@@ -91,7 +90,6 @@ def _():
     costs = input('Enter the cost:')
     taxs = input('Enter the tax:')
     costs = float(costs)
-
     return (costs,)
 
 
@@ -157,24 +155,24 @@ def _(freight_charges):
     for charges in freight_charges:
         if charges < 25:
             print(charges)
-    return
+    return (charges,)
 
 
 @app.cell
 def _():
     # Your own example of each name.
 
-    # 1. value: 
-    # 2. name and assignment: total =  
-    # 3. type: 
-    # 4. list: 
-    # 5. index:
-    # 6. loop:
-    # 7. condition:
-    # 8. f-string:
-    # 9. many into one number:
-    # 10. function and argument:
-    # 11. error:
+    # 1. value: 10
+    # 2. name and assignment: total =  sum(charges)
+    # 3. type: 10 vs "10"
+    # 4. list: list_numbers = [1, 2, 3, 4, 5]
+    # 5. index: list_numbers[0]
+    # 6. loop: for number in numbers
+    # 7. condition: if number > 2
+    # 8. f-string: f"${total:.2f}"
+    # 9. many into one number: sum(list_numbers)
+    # 10. function and argument: sorted(numbers, reverse=true)
+    # 11. error: SyntaxError
     return
 
 
@@ -229,7 +227,19 @@ def _(mo):
 @app.cell
 def _():
     charges = [16.75, 22.25, 25.00, 20.25, 36.25]
-    charges
+    charges[0]
+    charges[-1]
+    charges[5]
+    return (charges,)
+
+
+@app.cell
+def _(charges):
+    total = 0
+    for charge in charges:
+        if charge < 25:
+            total = total + charge
+    total
     return
 
 
@@ -273,13 +283,13 @@ def _(mo):
     it, write under the letter, and press `Ctrl+Enter`. Code still goes in cells of your
     own, added with the **+** button.
 
-    **A ·**
+    **A ·** When a score satisfies two tests at once, the test will chose the first true statement in the if and elif chain.
 
-    **C ·**
+    **C ·** When you use .append it adds the variables after as one item even if it is a list like ["stapler", "tape"]. .extend adds the each individual item in your list as individual items in the new list.
 
-    **D ·**
+    **D ·** tickers.sort() changes the list in place and returns nothing, so it prints None, while sorted(tickers) returns a new list without changing the original.
 
-    **E ·**
+    **E ·** You would want two names for the same list so that you can any changes to one name show up for the other name as well. This can be helpful for tracking inventory for two seperate nights of the same event that share the same inventory.
     """)
     return
 
@@ -309,25 +319,21 @@ def _(mo):
 @app.cell
 def _():
     score = 95
+
     if score >= 60:
         print("Pass")
-    elif score >= 90:
+    elif score >= 95:
         print("A")
+    elif score < 60:
+        print("Fail")
     return
 
 
-@app.cell
-def _():
-    score = 81
-
-    if score >= 90:
-        print("A")
-    elif score >= 80:
-        print("B")
-    elif score >= 60:
-        print("Pass")
-    else:
-        print("Fail")
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    When a score satisfies two tests at once, the test will chose the first true statement in the if and elif chain.
+    """)
     return
 
 
@@ -355,6 +361,33 @@ def _(mo):
 def _():
     statuses = ["shipped", "pending", "shipped", "cancelled", "shipped"]
     statuses
+    return (statuses,)
+
+
+@app.cell
+def _(statuses):
+    shipped_count = 0
+    for status in statuses:
+        if status == "shipped":
+            shipped_count = shipped_count + 1
+    shipped_count
+    
+    return (shipped_count,)
+
+
+@app.cell
+def _(statuses):
+    not_shipped_count = 0
+    for status2 in statuses:
+        if status2 == "pending" or status2 == "cancelled":
+            not_shipped_count = not_shipped_count + 1
+    not_shipped_count
+    return
+
+
+@app.cell
+def _(shipped_count, statuses):
+    print(f"{shipped_count / len(statuses)*100}% of orders have shipped")
     return
 
 
@@ -382,8 +415,22 @@ def _(mo):
 @app.cell
 def _():
     order_lines = ["notebook", "pen"]
-    order_lines.append(["stapler", "tape"])
+    order_lines.extend(["stapler", "tape"])
     len(order_lines)
+    return (order_lines,)
+
+
+@app.cell
+def _(order_lines):
+    order_lines[3]
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    When you use .append it adds the variables after as one item even if it is a list like ["stapler", "tape"]. .extend adds the each individual item in your list as individual items in the new list.
+    """)
     return
 
 
@@ -413,6 +460,39 @@ def _():
     tickers = ["NVDA", "AAPL", "MSFT"]
     print(sorted(tickers))
     print(tickers.sort())
+    tickers
+    return (tickers,)
+
+
+@app.cell
+def _(tickers):
+    print(sorted(tickers))
+    return
+
+
+@app.cell
+def _(tickers):
+    print(tickers.sort())
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    tickers.sort() changes the list in place and returns nothing, so it prints None, while sorted(tickers) returns a new list without changing the original.
+    """)
+    return
+
+
+@app.cell
+def _(tickers):
+    sorted(tickers, reverse=True)
+    return
+
+
+@app.cell
+def _(tickers):
+    tickers.sort(reverse=True)
     tickers
     return
 
@@ -447,9 +527,32 @@ def _(mo):
 @app.cell
 def _():
     prices = [12.50, 8.00, 19.99]
-    sale_prices = prices
+    sale_prices = prices[:]
     sale_prices.append(4.99)
     prices
+    return prices, sale_prices
+
+
+@app.cell
+def _(prices, sale_prices):
+    prices is sale_prices
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    You would want two names for the same list so that you can any changes to one name show up for the other name as well. This can be helpful for tracking inventory for two seperate nights of the same event that share the same inventory.
+    """)
+    return
+
+
+@app.cell
+def _(sale_prices):
+    for i in range(len(sale_prices)):
+        sale_prices[i] = sale_prices[i] * 0.9
+
+    sale_prices
     return
 
 
