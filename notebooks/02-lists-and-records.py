@@ -660,6 +660,32 @@ def _(charges):
     return
 
 
+@app.cell
+def _(charges):
+    charges[-6]
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    if I did charges[-5] I would recieve the first item in the list as - counts from last item to first item, and -1 would give the last item. There are only 5 items so -6 would refer to a item that does not exist therefore an error occurs.
+    """)
+    return
+
+
+@app.cell
+def _(shipped_count, statuses):
+    print(f"{shipped_count} of {len(statuses)} orders shipped")
+    return
+
+
+@app.cell
+def _(shipped_count, statuses):
+    print(f"{shipped_count} of {len(statuses)} orders shipped ({shipped_count / len(statuses) * 100:.2f}%) ")
+    return
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
