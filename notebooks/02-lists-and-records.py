@@ -152,10 +152,10 @@ def _(freight_charges):
 
 @app.cell
 def _(freight_charges):
-    for charges in freight_charges:
-        if charges < 25:
-            print(charges)
-    return (charges,)
+    for charges1 in freight_charges:
+        if charges1 < 25:
+            print(charges1)
+    return
 
 
 @app.cell
@@ -371,7 +371,7 @@ def _(statuses):
         if status == "shipped":
             shipped_count = shipped_count + 1
     shipped_count
-    
+
     return (shipped_count,)
 
 
@@ -587,6 +587,34 @@ def _():
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
+    1) it just added 100 next to 50 to get 10050, this is becuase the quotations make the 50 and 100 a text type not numerical values.
+    """)
+    return
+
+
+@app.cell
+def _():
+    print(int("100") + int("50"))
+    return
+
+
+@app.cell
+def _():
+    float("100.5")
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    int() is to make an integer while float() is to make a continuous value.
+    """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
     > **Advanced · G · Off the end.** `charges` in section 2 holds last week's five freight
     > charges. This one has no cell of its own, because every line in it fails on
     > purpose and a notebook that raises on load is a nuisance.
@@ -603,6 +631,32 @@ def _(mo):
     > `3 of 5 orders shipped (60%)`. An f-string is the short way to build a sentence out of
     > values, and it was section 5 of last week's notebook.
     """)
+    return
+
+
+@app.cell
+def _(charges):
+    charges[5]
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    You do not recieve anything because if the list has 5 items the fifth item would be charges[4] because the list starts counting at charges[0]
+    """)
+    return
+
+
+@app.cell
+def _(charges):
+    charges[4]
+    return
+
+
+@app.cell
+def _(charges):
+    charges[-1]
     return
 
 
