@@ -371,7 +371,6 @@ def _(statuses):
         if status == "shipped":
             shipped_count = shipped_count + 1
     shipped_count
-
     return (shipped_count,)
 
 
@@ -745,6 +744,32 @@ def _(mo):
     return
 
 
+@app.cell
+def _(first_order):
+    first_order["Freight"]
+    return
+
+
+@app.cell
+def _(first_order):
+    first_order["freight"]
+    return
+
+
+@app.cell
+def _(first_order):
+    first_order[0]
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    first_order[0] and first_order["freight"] fail as they are refering to the dictionary that looks up by field/name. first_order[0] is lookibg for the first value or item in a list, this does not exist in our dictionary as each item is labeled by a name, while first_order["freight"] is trying to look up the Freight section but leaves out the capital F which wont allow it to run because it must be Frieght as it is case specific
+    """)
+    return
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
@@ -834,6 +859,51 @@ def _(mo):
     return
 
 
+@app.cell
+def _(orders):
+    total_freight = 0
+    for order in orders:
+        total_freight = total_freight + order["Freight"]
+    total_freight
+    return
+
+
+@app.cell
+def _(orders):
+    noshipdate = 0
+    for order2 in orders:
+        if order2["ShippedDate"] is None:
+            noshipdate = noshipdate + 1
+    noshipdate
+    return
+
+
+@app.cell
+def _(orders):
+    largestfreight = 0
+    largestfreight_order_id = 0
+    for order3 in orders:
+        if order3['Freight'] > largestfreight:
+            largestfreight = order3['Freight']
+            largestfreight_order_id = order3["OrderID"]
+    largestfreight
+    return largestfreight, largestfreight_order_id
+
+
+@app.cell
+def _(largestfreight, largestfreight_order_id):
+    print(f"The largest freight for an order is {largestfreight}$ for order number {largestfreight_order_id}")
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    The orders that did not ship all take place in the same month, April of 2018, I assume there is some timing issue where orders placed near the end of the reporting period haven't had time to ship yet.
+    """)
+    return
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
@@ -854,10 +924,18 @@ def _(mo):
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
-    *One row is ...*
+    *One row is a single observation within your dataset with the columns representing each individual variable. So as you add a row you are adding an observation to each variable in your data set. In this specific situation a row would represent all the information attached to one order. It would give information such as the order ID, customer details, product ordered, quantity, price, and order date all in one place.*
 
     *(Replace this line with your own sentence. If this cell shows you code instead of
     text, use the cell menu to turn it into a markdown cell.)*
+    """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    For this table there would be 31 rows. A row that defines what each variable/column is and then the 30 rows of data, one for each order that has its corresponding observations in it.
     """)
     return
 
