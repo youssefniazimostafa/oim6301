@@ -891,6 +891,12 @@ def _(orders):
 
 
 @app.cell
+def _(largestfreight_order_id):
+    largestfreight_order_id
+    return
+
+
+@app.cell
 def _(largestfreight, largestfreight_order_id):
     print(f"The largest freight for an order is {largestfreight}$ for order number {largestfreight_order_id}")
     return
@@ -973,6 +979,14 @@ def _():
         {"Symbol": "TSLA", "Shares": 150, "Price": 255.70},
     ]
     portfolio
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    1) The cost of the whole portfolio would have to be calculated by multiplying the number of shares by the price of each individual share then adding the product of each stock together to get the total cost of the portfolio. For example fro AAPL you woud multiply 173.93, the stock price, by 100, the number of stocks, to get 17,393, which would be the total cost of the Apple share alone. This process would be repeated for ever stock in the portfolio and then you would add up all of the individual totals to get the overall cost of the portfolio. This value would be 116,302.70$ using this method.
+    """)
     return
 
 
