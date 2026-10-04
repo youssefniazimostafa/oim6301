@@ -979,7 +979,7 @@ def _():
         {"Symbol": "TSLA", "Shares": 150, "Price": 255.70},
     ]
     portfolio
-    return
+    return (portfolio,)
 
 
 @app.cell(hide_code=True)
@@ -987,6 +987,44 @@ def _(mo):
     mo.md(r"""
     1) The cost of the whole portfolio would have to be calculated by multiplying the number of shares by the price of each individual share then adding the product of each stock together to get the total cost of the portfolio. For example fro AAPL you woud multiply 173.93, the stock price, by 100, the number of stocks, to get 17,393, which would be the total cost of the Apple share alone. This process would be repeated for ever stock in the portfolio and then you would add up all of the individual totals to get the overall cost of the portfolio. This value would be 116,302.70$ using this method.
     """)
+    return
+
+
+@app.cell
+def _(portfolio):
+    total_cost = 0
+    for holding in portfolio:
+        total_cost = total_cost + holding["Shares"] * holding["Price"]
+    total_cost
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    3) I asked Ai to help me write the code to find the portfolio cost and understood the logic behind it. We set a new name for total cost and use the for holding in portfolio to then make it do the mathimatical calculation of shares * price adding that sum to the total cost name we assigned in order to instantly have the full cost when you write total_cost
+    """)
+    return
+
+
+@app.cell
+def _():
+    bakery_orders = [
+        {"Item": "Croissant", "Quantity": 12, "Price": 3.50},
+        {"Item": "Baguette", "Quantity": 8, "Price": 4.25},
+        {"Item": "Muffin", "Quantity": 15, "Price": 2.75},
+        {"Item": "Cake Slice", "Quantity": 6, "Price": 5.00},
+    ]
+    bakery_orders
+    return (bakery_orders,)
+
+
+@app.cell
+def _(bakery_orders):
+    total_bakery_cost = 0
+    for items in bakery_orders:
+        total_bakery_cost = total_bakery_cost + items["Price"] * items["Quantity"]
+    total_bakery_cost
     return
 
 
@@ -1038,6 +1076,26 @@ def _(mo):
         _where = f"could not write into {_data_dir.name}/: {_error}"
 
     _where
+    return (portfolio_csv,)
+
+
+@app.cell
+def _(portfolio_csv):
+    with open(portfolio_csv) as _file:
+        _lines = _file.readlines()
+
+    print(f"{'name':<6}{'shares':>8}{'price':>10}")
+
+    file_total_cost = 0
+    for _line in _lines[1:]:
+        _parts = _line.strip().split(",")
+        _name = _parts[0]
+        _shares = int(_parts[1])
+        _price = float(_parts[2])
+        print(f"{_name:<6}{_shares:>8}{_price:>10.2f}")
+        file_total_cost = file_total_cost + _shares * _price
+
+    print(f"Total cost: ${file_total_cost:.2f}")
     return
 
 
@@ -1053,11 +1111,11 @@ def _(mo):
 
     **What you can do now:**
 
-    - [ ] I can take one field out of one record, by name
-    - [ ] I can state what one row of a table means, in a sentence
-    - [ ] I can walk a collection and total the part of it that meets a condition
-    - [ ] I can tell a missing value from a zero
-    - [ ] I can hand a problem to an agent and check what comes back
+    - [x] I can take one field out of one record, by name
+    - [x] I can state what one row of a table means, in a sentence
+    - [x] I can walk a collection and total the part of it that meets a condition
+    - [x] I can tell a missing value from a zero
+    - [x] I can hand a problem to an agent and check what comes back
 
     You will do the same things to a pandas table in October and to a database table in
     November.
