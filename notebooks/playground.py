@@ -41,5 +41,20 @@ def _(Data):
     return
 
 
+@app.cell
+def _():
+    tels = [535-123-4567, 545-987-6543, 555-246-8013]
+
+    return (tels,)
+
+
+@app.cell
+def _(tels):
+    for tel in tels:
+        area, *dontcare = tel.split("-")
+        print(area)
+    return
+
+
 if __name__ == "__main__":
     app.run()

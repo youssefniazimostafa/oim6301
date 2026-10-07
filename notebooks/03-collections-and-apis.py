@@ -571,6 +571,7 @@ def _(requests):
         "&temperature_unit=fahrenheit&wind_speed_unit=mph"
         "&timezone=America/New_York"
     )
+    print(babson_url)
     babson_reply = requests.get(babson_url, timeout=10)
     babson_reply.status_code
     return (babson_reply,)
@@ -693,6 +694,19 @@ def _(mo):
 
     **E · The wind in a sentence.** Add a cell that takes the wind speed and its unit out of `babson_weather` and puts both into one sentence with an f-string. *Check yourself: the unit reads `mp/h`, which is how this service writes miles per hour.*
     """)
+    return
+
+
+@app.cell
+def _(babson_weather):
+    babson_weather["current"]["wind_speed_10m"]
+
+    return
+
+
+@app.cell
+def _(babson_weather):
+    print(f"Current wind speed: {babson_weather['current']['wind_speed_10m']} km/h")
     return
 
 
