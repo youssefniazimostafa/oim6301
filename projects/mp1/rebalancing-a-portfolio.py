@@ -87,8 +87,18 @@ def _(mo):
 
 @app.cell
 def _():
-    # Your inputs.
-    return
+    holdings = [
+        ("AAPL", 100, 173.93),
+        ("MSFT", 50, 319.53),
+        ("GOOG", 80, 131.36),
+        ("AMZN", 200, 129.33),
+        ("NVDA", 20, 410.17),
+        ("TSLA", 150, 255.70),
+    ]
+    cash = 5000.00
+    target_weights = {"AAPL": 0.20, "MSFT": 0.20, "GOOG": 0.15,
+                      "AMZN": 0.15, "NVDA": 0.15, "TSLA": 0.15}
+    return cash, holdings, target_weights
 
 
 @app.cell(hide_code=True)
@@ -98,6 +108,28 @@ def _(mo):
 
     Add as many cells as you need. Try each step yourself before you ask your agent, and commit as you go.
     """)
+    return
+
+
+@app.cell
+def _(cash, holdings):
+    total_value = holdings[0][1] * holdings[0][2] + holdings[1][1] * holdings[1][2] + holdings[2][1] * holdings[2][2] + holdings[3][1] * holdings[3][2] + holdings[4][1] * holdings[4][2] + holdings[5][1] * holdings[5][2] + cash
+
+    total_value
+    return
+
+
+@app.cell
+def _(cash, holdings, target_weights):
+    rebalanced = []
+    total_portfolio_value = cash
+    for ticker, shares, price in holdings:
+        total_portfolio_value += shares * price
+        weight = target_weights[ticker]
+        target_dollars = total_portfolio_value * weight
+        target_shares = int(target_dollars // price)
+        rebalanced.append((ticker, target_shares, price))
+    rebalanced
     return
 
 
