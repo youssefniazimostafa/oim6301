@@ -348,5 +348,22 @@ def _(actual_holdings, actual_total_value, target_weights):
     return
 
 
+@app.cell
+def _(cash, cash_after_trades, remaining_cash, total_fees):
+    print(f"Starting cash: ${cash:.2f}")
+    print(f"Cash after trades and fees: ${cash_after_trades:.2f}")
+    print(f"Total spent on trade fees: ${total_fees:.2f}")
+    print(f"Share of starting cash spent on fees: {total_fees/remaining_cash:.2%}")
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    I tried to create a code that can calculate how much charges I will inccur in trading and how much it will cost out of the remaining cash funds. It came to say that it would cost 30$ and that it would leave my remaining cash at about 695.62 from 725.62.
+    """)
+    return
+
+
 if __name__ == "__main__":
     app.run()
