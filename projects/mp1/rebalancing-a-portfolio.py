@@ -120,22 +120,33 @@ def _(cash, holdings):
 
 
 @app.cell
-def _(cash, holdings, target_weights):
-    rebalanced = []
+def _(cash, holdings):
     total_portfolio_value = cash
     for ticker, shares, price in holdings:
         total_portfolio_value += shares * price
-        weight = target_weights[ticker]
-        target_dollars = total_portfolio_value * weight
-        target_shares = int(target_dollars // price)
-        rebalanced.append((ticker, target_shares, price))
-    rebalanced
-    return
+
+    total_portfolio_value
+    return (total_portfolio_value,)
 
 
 @app.cell
-def _():
-    return
+def _(holdings, target_weights, total_portfolio_value):
+    rebalanced = []
+    for _ticker, _shares, _price in holdings:
+        target_dollars = total_portfolio_value * target_weights[_ticker]
+        target_shares = int(target_dollars // _price)
+        rebalanced.append((_ticker, target_shares, _price))
+    rebalanced
+    return (rebalanced,)
+
+
+@app.cell
+def _(rebalanced, total_portfolio_value):
+    rebalanced_stock_value = rebalanced[0][1] * rebalanced[0][2] + rebalanced[1][1] * rebalanced[1][2] + rebalanced[2][1] * rebalanced[2][2] + rebalanced[3][1] * rebalanced[3][2] + rebalanced[4][1] * rebalanced[4][2] + rebalanced[5][1] * rebalanced[5][2]
+    remaining_cash = total_portfolio_value - rebalanced_stock_value
+    remaining_cash = round(remaining_cash, 2)
+    remaining_cash
+    return (remaining_cash,)
 
 
 @app.cell(hide_code=True)
@@ -145,6 +156,19 @@ def _(mo):
 
     *A table of your results in the cell below, printed with `print` and f-strings, then one sentence here that answers the question in section 1, with the number in it.*
     """)
+    return
+
+
+@app.cell
+def _(rebalanced):
+    for row in rebalanced:
+        print(row)
+    return
+
+
+@app.cell
+def _(remaining_cash):
+    print(f" The amount of cash remaining: {remaining_cash}")
     return
 
 
