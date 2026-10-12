@@ -287,5 +287,66 @@ def _(mo):
     return
 
 
+@app.cell
+def _(cash, holdings, rebalanced):
+    trade_fee = 5.00
+    min_trade_value = 500.00
+
+    actual_holdings = []
+    total_fees = 0.0
+    skipped_trades = 0
+    cash_after_trades = cash
+
+    for i in range(len(holdings)):
+        _ticker, _current_shares, _price = holdings[i]
+        _target_shares = rebalanced[i][1]
+        _share_diff = _target_shares - _current_shares
+        _trade_value = abs(_share_diff) * _price
+
+        if _trade_value < min_trade_value:
+            actual_holdings.append((_ticker, _current_shares, _price))
+            skipped_trades += 1
+        else:
+            actual_holdings.append((_ticker, _target_shares, _price))
+            cash_after_trades -= _share_diff * _price
+            cash_after_trades -= trade_fee
+            total_fees += trade_fee
+
+    actual_holdings
+    return actual_holdings, cash_after_trades, skipped_trades, total_fees
+
+
+@app.cell
+def _(
+    actual_holdings,
+    cash_after_trades,
+    skipped_trades,
+    total_fees,
+    total_portfolio_value,
+):
+    actual_stock_value = 0.0
+    for _ticker, _shares, _price in actual_holdings:
+        actual_stock_value += _shares * _price
+
+    actual_total_value = actual_stock_value + cash_after_trades
+
+    print(f"Trades skipped (under $500): {skipped_trades}")
+    print(f"Total fees paid: ${total_fees}")
+    print(f"Total value before trading: ${total_portfolio_value}")
+    print(f"Total value after trading and fees: ${round(actual_total_value, 2)}")
+    return (actual_total_value,)
+
+
+@app.cell
+def _(actual_holdings, actual_total_value, target_weights):
+    print(f"{'Ticker':<8}{'Target %':>10}{'Actual %':>10}{'Diff %':>10}")
+    for _ticker, _shares, _price in actual_holdings:
+        _actual_weight = (_shares * _price) / actual_total_value
+        _target_weight = target_weights[_ticker]
+        _diff = (_actual_weight - _target_weight) * 100
+        print(f"{_ticker:<8}{_target_weight*100:>9.2f}%{_actual_weight*100:>9.2f}%{_diff:>9.2f}%")
+    return
+
+
 if __name__ == "__main__":
     app.run()
