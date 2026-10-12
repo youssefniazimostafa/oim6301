@@ -146,7 +146,7 @@ def _(rebalanced, total_portfolio_value):
     remaining_cash = total_portfolio_value - rebalanced_stock_value
     remaining_cash = round(remaining_cash, 2)
     remaining_cash
-    return (remaining_cash,)
+    return rebalanced_stock_value, remaining_cash
 
 
 @app.cell(hide_code=True)
@@ -167,13 +167,22 @@ def _(rebalanced):
 
 
 @app.cell
+def _(rebalanced):
+    print(f"{'Ticker':<8}{'Shares':>8}{'Price':>10}")
+    for _ticker, _shares, _price in rebalanced:
+        print(f"{_ticker:<8}{_shares:>8}{_price:>10.2f}")
+    return
+
+
+@app.cell
 def _(remaining_cash):
     print(f" The amount of cash remaining: {remaining_cash}")
     return
 
 
 @app.cell
-def _():
+def _(remaining_cash):
+    print(f"The portfolio can be purchased according close to target weights by buying and selling the calculated number of shares, with all six stocks ending within 0.24 percentage points of their targets and {remaining_cash}$ remaining in cash")
     return
 
 
@@ -188,7 +197,29 @@ def _(mo):
 
 
 @app.cell
-def _():
+def _(rebalanced_stock_value, remaining_cash, total_portfolio_value):
+    rebalanced_total_value = rebalanced_stock_value + remaining_cash
+
+    print(f"Total value from original holdings (running total): {total_portfolio_value}")
+    print(f"Total value after rebalancing (stocks + leftover cash): {rebalanced_total_value}")
+    print(f"Difference: {round(total_portfolio_value - rebalanced_total_value, 2)}")
+    return
+
+
+@app.cell
+def _(rebalanced, total_portfolio_value):
+    for _ticker, _shares, _price in rebalanced:
+        _value = _shares * _price
+        _weight = _value / total_portfolio_value
+        print(f"{_ticker}: {_weight:.2%}")
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    In this code I confirmed that the portfolio value is still the same after rebalancing and that the target weights are correct.
+    """)
     return
 
 
@@ -202,6 +233,48 @@ def _(mo):
     *If the agent got it right the first time: what did you do to verify that?*
     """)
     return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    When trying to create a table for my final answer I asked the AI to create a table based on the rebalanced list using an f string, it ended up making an extensive table that included a lot of variables that I did not desire and asked it to create an easier table that just states the ticker its price and the number of shares.
+    """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    In another instance I made code to calculate the full price of the whole portfolio based on the holdings list. I then asked AI to verify whether it was correct they stated it was but then gave me a much easier alternative to calculating the total portfolio value that I ended up using instead and helped make the project a lot easier.
+    """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    The following shows my code vs what AI reccomended.
+    """)
+    return
+
+
+@app.cell
+def _(cash, holdings):
+    total_value = holdings[0][1] * holdings[0][2] + holdings[1][1] * holdings[1][2] + holdings[2][1] * holdings[2][2] + holdings[3][1] * holdings[3][2] + holdings[4][1] * holdings[4][2] + holdings[5][1] * holdings[5][2] + cash
+
+    total_value
+    return
+
+
+@app.cell
+def _(cash, holdings):
+    total_portfolio_value = cash
+    for ticker, shares, price in holdings:
+        total_portfolio_value += shares * price
+
+    total_portfolio_value
+    return (total_portfolio_value,)
 
 
 @app.cell(hide_code=True)
