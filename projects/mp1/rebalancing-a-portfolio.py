@@ -45,6 +45,14 @@ def _(mo):
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
+    A financial advisor or anyone who manages their own investments could use this tool. They can use this tool to rebalance their investments to the agreed upon percentage targets in order to adjust for changes made by market fluctuations over time. This allows for realloction of investments so that risks can be mitigated and investment goals can continue to be met over time. It is basically a way to organise a restructure your investing plans based on your own goals and risk tolerance.
+    """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
     ## 2. My Plan Before AI
 
     *Before you ask your agent anything, write how you would solve it: the steps, in order, in plain words, in five lines or more. Then answer these two questions:*
@@ -53,6 +61,14 @@ def _(mo):
     - *Which check will you use in section 6, and which two numbers should agree?*
 
     *Commit this notebook with the message `mp1: plan before AI`.*
+    """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    My loop will carry a running total of the portfolio value. It will start with th 5000 in cash and adds shares x price for each company until I have the full value of the account. that total i how much money I have to work with so I multiply it by each target weight to see how much should go into each stock. For example. if the account is worth 20k and apples target is 20% then 4000 goes into apple and I divide the price by that 4000 and round down to get whole shares. I then build a new list with the rebalanced shares, values and whatever cash will be left over. For my check in sction 6 I will compare each stocks target dollar amount which is total x weight to its actual value after rebalancing, since we round down to whole shares, they should agree within one shares price. I will also make sure the total value before rebalancing matches the total after, since they should be the same value as no money should be gained or lost.
     """)
     return
 
