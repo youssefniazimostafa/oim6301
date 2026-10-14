@@ -186,6 +186,20 @@ def _(remaining_cash):
     return
 
 
+@app.cell
+def _(holdings, rebalanced, target_weights, total_portfolio_value):
+    print(f"{'Ticker':<8}{'Old':>6}{'New':>6}{'Trade':>8}{'Value After':>14}{'Weight After':>14}{'Gap pp':>10}")
+    for i in range(len(holdings)):
+        _ticker, _old_shares, _price = holdings[i]
+        _, _new_shares, _ = rebalanced[i]
+        _trade = _new_shares - _old_shares
+        _value_after = _new_shares * _price
+        _weight_after = _value_after / total_portfolio_value
+        _gap = (_weight_after - target_weights[_ticker]) * 100
+        print(f"{_ticker:<8}{_old_shares:>6}{_new_shares:>6}{_trade:>+8}{_value_after:>14.2f}{_weight_after:>14.2%}{_gap:>10.2f}")
+    return
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
@@ -212,6 +226,28 @@ def _(rebalanced, total_portfolio_value):
         _value = _shares * _price
         _weight = _value / total_portfolio_value
         print(f"{_ticker}: {_weight:.2%}")
+    return
+
+
+@app.cell
+def _(holdings, rebalanced, target_weights, total_portfolio_value):
+    max_gap = 0
+    for x in range(len(holdings)):
+        _ticker, _old_shares, _price = holdings[x]
+        _, _new_shares, _ = rebalanced[x]
+        _value_after = _new_shares * _price
+        _weight_after = _value_after / total_portfolio_value
+        _gap = abs((_weight_after - target_weights[_ticker]) * 100)
+        if _gap > max_gap:
+            max_gap = _gap
+
+    max_gap
+    return (max_gap,)
+
+
+@app.cell
+def _(max_gap, remaining_cash):
+    print(f"The portfolio can be bought close to target weights by trading the shares above, with all six stocks ending within {max_gap:.2f} percentage points of their targets and {remaining_cash}$ remaining in cash")
     return
 
 
@@ -267,16 +303,6 @@ def _(cash, holdings):
     return
 
 
-@app.cell
-def _(cash, holdings):
-    total_portfolio_value = cash
-    for ticker, shares, price in holdings:
-        total_portfolio_value += shares * price
-
-    total_portfolio_value
-    return (total_portfolio_value,)
-
-
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
@@ -297,9 +323,9 @@ def _(cash, holdings, rebalanced):
     skipped_trades = 0
     cash_after_trades = cash
 
-    for i in range(len(holdings)):
-        _ticker, _current_shares, _price = holdings[i]
-        _target_shares = rebalanced[i][1]
+    for y in range(len(holdings)):
+        _ticker, _current_shares, _price = holdings[y]
+        _target_shares = rebalanced[y][1]
         _share_diff = _target_shares - _current_shares
         _trade_value = abs(_share_diff) * _price
 
