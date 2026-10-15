@@ -295,14 +295,6 @@ def _(mo):
     return
 
 
-@app.cell
-def _(cash, holdings):
-    total_value = holdings[0][1] * holdings[0][2] + holdings[1][1] * holdings[1][2] + holdings[2][1] * holdings[2][2] + holdings[3][1] * holdings[3][2] + holdings[4][1] * holdings[4][2] + holdings[5][1] * holdings[5][2] + cash
-
-    total_value
-    return
-
-
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
