@@ -60,7 +60,7 @@ def _():
     state = "Massachusetts"
     lowest_high_f = 55
     highest_high_f = 80
-    max_rain_chance = 60
+    max_rain_chance = 30
     max_wind_mph = 15
     return (
         highest_high_f,
@@ -395,7 +395,82 @@ def _(mo):
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
- 
+    Section 9: Going Further
+    """)
+    return
+
+
+@app.function
+def score_day(day, low_limit, high_limit, rain_limit, wind_limit):
+    # Temperature: up to 4 points
+    if low_limit <= day["high_f"] <= high_limit:
+        temp_points = 4
+    elif day["high_f"] < low_limit:
+        temp_points = max(0, 4 - (low_limit - day["high_f"]) / 5)
+    else:
+        temp_points = max(0, 4 - (day["high_f"] - high_limit) / 5)
+
+    # Rain: up to 3 points, half at the limit, zero at twice the limit
+    rain_points = max(0, 3 * (1 - day["rain_chance"] / (2 * rain_limit)))
+
+    # Wind: up to 3 points, half at the limit, zero at twice the limit
+    wind_points = max(0, 3 * (1 - day["wind_mph"] / (2 * wind_limit)))
+
+    return round(temp_points + rain_points + wind_points, 1)
+
+
+@app.cell
+def _(
+    best_day,
+    highest_high_f,
+    lowest_high_f,
+    max_rain_chance,
+    max_wind_mph,
+    rows,
+):
+    scored_rows = []
+    for _row in rows:
+        _score = score_day(_row, lowest_high_f, highest_high_f, max_rain_chance, max_wind_mph)
+        scored_rows.append({"date": _row["date"], "passes": _row["passes"], "score": _score})
+
+    print(f"{'Date':<12}{'Passes':>8}{'Score /10':>11}")
+    print("-" * 31)
+    for _row in scored_rows:
+        if _row["passes"]:
+            _passes = "Yes"
+        else:
+            _passes = "No"
+        print(f"{_row['date']:<12}{_passes:>8}{_row['score']:>11.1f}")
+
+    best_by_score = scored_rows[0]
+    for _row in scored_rows:
+        if _row["score"] > best_by_score["score"]:
+            best_by_score = _row
+
+    print()
+    print(f"Highest score: {best_by_score['date']} with {best_by_score['score']}/10.")
+    print(f"Best day by the club's rules: {best_day['date']}.")
+    if best_by_score["date"] == best_day["date"]:
+        print("Both methods agree.")
+    else:
+        print("The two methods disagree. See the note in Section 9.")
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    In Section 9, instead of only marking each day Yes or No, I built a score_day function that grades every day out of 10, splitting points across temperature (4), rain (3), and wind (3), with points fading gradually rather than failing all at once. The highest scoring day matched my original best day (2026-11-01), so the two methods agreed. A day like 2026-11-05 fails the strict rules outright over its 34% rain chance, yet still scores around 7/10 since its temperature and wind are strong. One weakness was the 4/3/3 point split was my own choice, and a club that cared more about staying dry might weight rain heavier instead.
+    """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    Section 10: How Long
+
+    This Project took me around 3 hours including preplanning.
     """)
     return
 
