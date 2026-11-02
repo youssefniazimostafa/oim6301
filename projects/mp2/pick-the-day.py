@@ -9,8 +9,9 @@ def _():
     import marimo as mo
     import requests
     import csv
+    import datetime
 
-    return mo, requests
+    return datetime, mo, requests
 
 
 @app.cell(hide_code=True)
@@ -182,6 +183,146 @@ def _(forecast, highest_high_f, lowest_high_f, max_rain_chance, max_wind_mph):
             "passes": _broken == 0,
         })
     rows
+    return (rows,)
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    Section 5: The Answer
+    """)
+    return
+
+
+@app.cell
+def _(location, rows):
+    print(f"7-day forecast for {location['name']}, {location['state']}")
+    print()
+    print(f"{'Date':<12}{'High °F':>9}{'Low °F':>9}{'Rain %':>8}{'Wind mph':>10}{'Passes':>8}")
+    print("-" * 56)
+    for _row in rows:
+        if _row["passes"]:
+            _passes = "Yes"
+        else:
+            _passes = "No"
+        print(
+            f"{_row['date']:<12}"
+            f"{_row['high_f']:>9.1f}"
+            f"{_row['low_f']:>9.1f}"
+            f"{_row['rain_chance']:>8}"
+            f"{_row['wind_mph']:>10.1f}"
+            f"{_passes:>8}"
+        )
+    return
+
+
+@app.cell
+def _(rows):
+    passing_days = []
+    for _row in rows:
+        if _row["passes"]:
+            passing_days.append(_row)
+
+    if len(passing_days) > 0:
+        best_day = passing_days[0]
+        for _row in passing_days:
+            if _row["rain_chance"] < best_day["rain_chance"]:
+                best_day = _row
+            elif _row["rain_chance"] == best_day["rain_chance"] and _row["wind_mph"] < best_day["wind_mph"]:
+                best_day = _row
+    else:
+        best_day = rows[0]
+        for _row in rows:
+            if _row["rules_broken"] < best_day["rules_broken"]:
+                best_day = _row
+
+    best_day
+    return best_day, passing_days
+
+
+@app.cell
+def _(best_day, datetime, location, passing_days):
+    _day_label = datetime.date.fromisoformat(best_day["date"]).strftime("%A, %B %d")
+
+    if len(passing_days) > 0:
+        answer = (
+            f"The best day for the event in {location['name']}, {location['state']} is {_day_label}: "
+            f"of the {len(passing_days)} days that meet every rule, it has the lowest chance of rain "
+            f"({best_day['rain_chance']}%), with a high of {best_day['high_f']:.1f}°F "
+            f"and wind up to {best_day['wind_mph']:.1f} mph."
+        )
+    else:
+        answer = (
+            f"No day in the next week in {location['name']}, {location['state']} meets every rule. "
+            f"The closest is {_day_label}, which breaks {best_day['rules_broken']} rule(s), "
+            f"with a high of {best_day['high_f']:.1f}°F, a {best_day['rain_chance']}% chance of rain "
+            f"and wind up to {best_day['wind_mph']:.1f} mph."
+        )
+
+    print(answer)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    Section 6: How to know these numbers are right?
+    """)
+    return
+
+
+@app.cell
+def _(
+    highest_high_f,
+    location,
+    lowest_high_f,
+    max_rain_chance,
+    max_wind_mph,
+    passing_days,
+    requests,
+    rows,
+):
+    _raw = requests.get(
+        "https://api.open-meteo.com/v1/forecast",
+        params={
+            "latitude": location["latitude"],
+            "longitude": location["longitude"],
+            "daily": "temperature_2m_max,temperature_2m_min,precipitation_probability_max,wind_speed_10m_max",
+            "temperature_unit": "fahrenheit",
+            "wind_speed_unit": "mph",
+            "timezone": "America/New_York",
+            "forecast_days": 7,
+        },
+        timeout=10,
+    ).json()
+    _daily = _raw["daily"]
+
+    # Check 1: did I keep every day?
+    _days_in_reply = len(_daily["time"])
+    print(f"Check 1 - days in raw reply: {_days_in_reply}, rows in my table: {len(rows)}, match: {_days_in_reply == len(rows)}")
+
+    # Check 2: does my first row match the raw reply?
+    print(f"Check 2 - first day high in raw reply: {_daily['temperature_2m_max'][0]}, in my table: {rows[0]['high_f']}, "
+          f"match: {_daily['temperature_2m_max'][0] == rows[0]['high_f']}")
+
+    # Check 3: count passing days a different way
+    _passing_second_way = 0
+    for _i in range(_days_in_reply):
+        _high = _daily["temperature_2m_max"][_i]
+        _rain = _daily["precipitation_probability_max"][_i]
+        _wind = _daily["wind_speed_10m_max"][_i]
+        if lowest_high_f <= _high <= highest_high_f and _rain <= max_rain_chance and _wind <= max_wind_mph:
+            _passing_second_way += 1
+    print(f"Check 3 - passing days counted a second way: {_passing_second_way}, from my rules: {len(passing_days)}, "
+          f"match: {_passing_second_way == len(passing_days)}")
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    To check my work, I built three tests that each verify my table a different way. Check 1 calls the API fresh and counts its dates, comparing that to my row count, since it skips my zip loop, it would catch any day I dropped or duplicated, and it printed True. Check 2 grabs the first day's high temp straight from the raw list by position and compares it to my first row, showing my rows hold the right values, not something scrambled. Check 3 recounts passing days straight from the raw lists, using a position loop instead of zip, and flips the rule logic to ask "is this inside the limits?" instead of my original is this outside the limits? If I'd made a mistake right at a limit, these two versions would disagree, but they matched, printing True. Since three different approaches all landed on the same answer, I'm confident the table is right.
+    """)
     return
 
 
