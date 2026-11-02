@@ -326,5 +326,71 @@ def _(mo):
     return
 
 
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    Section 7
+    """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    While building this notebook, I ran into a chain of Error messages things like name mo is not defined, name requests is not defined, and name get_forecast is not defined. At first this was confusing, but reading the last line of each traceback told me exactly which name was missing, and I traced each one back to either a missing import (marimo, requests) or an earlier cell that hadn't been added yet, like the get_forecast function or the best_day cell. This taught me something specific about marimo: a cell can only use names that another cell actually defines, and if one cell fails, every cell that depends on it fails too with an "Ancestor raised" error, so I had to add cells in the right order. I knew each one was fixed when the cell ran clean and, eventually, all three of my Section 6 checks printed match: True.
+    """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    Section 8: Part 1
+    """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    get_coordinates(town_name, state_name) takes in the name of a town, like "Wellesley," and the name of a state, like "Massachusetts," so it knows which match to use if more than one town shares that name. It gives back a single dictionary with four things: the official name, the state, the latitude, and the longitude — and if nothing in that state matches the town name, it raises an error instead of returning anything. The line I had to think hardest about was results = data.get("results", []). This pulls out the list of matches the API sent back, but if the town wasn't found at all, there's no "results" key, so it hands back an empty list instead of crashing the whole program right there.
+
+    get_forecast(latitude, longitude) takes in the two coordinates get_coordinates found, so it knows exactly which location to ask the weather API about. It gives back a list of 7 dictionaries, one for each day, and each one holds that day's date, high, low, rain chance, and wind. The line I had to ask about here was for date, high, low, rain, wind in zip(...). The API sends back five separate lists (all the dates in one list, all the highs in another, and so on), so this loop walks through all five lists at the same time, grabbing the matching day's values from each one, so I can bundle them into a single record per day instead of five disconnected lists.
+    """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    Section 8: Part 2
+    """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    My Change: max_rain_chance = 60
+    """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    My prediction: I expect day 2026-11-05 (rain 34%), 2026-11-06 (rain 54%), and 2026-11-07 (rain 58%) to flip from No to Yes, since all three are at or under 60% and their temps and wind already fit the rules. That would bring the number of passing days from 4 up to 7. I don't expect the best day to change which already has the lowest rain chance (0%) and lowest wind (7.9 mph) of any day in the table, so even with three more days now qualifying, none of them can beat 0% rain.
+    """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+ 
+    """)
+    return
+
+
 if __name__ == "__main__":
     app.run()
