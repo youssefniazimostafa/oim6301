@@ -13,7 +13,7 @@
 
 import marimo
 
-__generated_with = "0.25.1"
+__generated_with = "0.24.2"
 app = marimo.App(width="medium", sql_output="polars")
 
 
@@ -100,7 +100,7 @@ def _(mo, pl, requests):
         town_rows = pl.DataFrame(_records).select(town_columns)
 
     county_rows.shape, town_rows.shape
-    return county_rows, town_rows
+    return
 
 
 @app.cell(hide_code=True)
@@ -130,7 +130,7 @@ def _(mo):
 
 
 @app.cell
-def _(county_rows, duckdb, mo, town_rows):
+def _(duckdb, mo):
     _file = mo.notebook_dir().parent / "data" / "ma-towns.duckdb"
     _file.parent.mkdir(exist_ok=True)
     _file.unlink(missing_ok=True)
@@ -218,6 +218,26 @@ def _(mo):
     return
 
 
+@app.cell
+def _(database, duckdb):
+    with duckdb.connect(database) as _con:
+        _con.execute("DROP TABLE IF EXISTS town_bills")
+        _con.execute("""
+            CREATE TABLE town_bills (
+                name        VARCHAR NOT NULL REFERENCES towns (name),
+                fiscal_year INTEGER NOT NULL,
+                average_single_family_bill_dollars INTEGER,
+                PRIMARY KEY (name, fiscal_year)
+            )
+        """)
+        _con.execute("""
+            INSERT INTO town_bills (name, fiscal_year, average_single_family_bill_dollars)
+            VALUES ('Wellesley', 2025, 19792),
+                   ('Wellesley', 2026, 20551)
+        """)
+    return
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
@@ -254,6 +274,26 @@ def _(mo):
     return
 
 
+@app.cell
+def _(database, duckdb):
+    _attempts = {
+        "duplicate name": "INSERT INTO towns SELECT * FROM towns WHERE name = 'Wellesley'",
+        "zero population": "INSERT INTO towns VALUES ('Zeroville', 'Norfolk', 0, 0, 0)",
+        "missing county":  "INSERT INTO towns VALUES ('Nowhere', 'Atlantis', 10, 0, 0)",
+    }
+
+    _messages = {}
+    for _rule, _sql in _attempts.items():
+        try:
+            with duckdb.connect(database) as _con:
+                _con.execute(_sql)
+            _messages[_rule] = "accepted"
+        except duckdb.ConstraintException as _error:
+            _messages[_rule] = str(_error).splitlines()[0]
+    _messages
+    return
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
@@ -286,6 +326,18 @@ def _(mo):
     *Check yourself: Brookline, Newton, Cambridge, Somerville, Quincy.*
 
     **Going further.** Ask the same question of `counties` and `towns` together: which county is each of those five in, and what share of its county's people does each hold? That needs both tables at once, which the topic slides call a join.
+    """)
+    return
+
+
+@app.cell
+def _(ask):
+    ask("""
+        SELECT name, population, average_single_family_bill_dollars
+        FROM towns
+        WHERE population > 50000
+        ORDER BY average_single_family_bill_dollars DESC
+        LIMIT 5
     """)
     return
 
@@ -395,7 +447,7 @@ def _(ask, mo, requests):
         _path.write_bytes(_reply.content)
     orders_file = _path.as_posix()
     ask(f"SELECT count(*) AS orders FROM '{orders_file}'")
-    return (orders_file,)
+    return
 
 
 @app.cell(hide_code=True)
