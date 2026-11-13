@@ -10,7 +10,7 @@
 
 import marimo
 
-__generated_with = "0.25.2"
+__generated_with = "0.24.2"
 app = marimo.App(width="medium", sql_output="polars")
 
 
@@ -389,6 +389,29 @@ def _(mo):
     *Check yourself: Beverages first, with about 13,375,939, and all eight, added before rounding, give 63,856,337.63.*
 
     **Going further.** Compute revenue by category for each year, and find the category that grew the most.
+    """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    Which 10 products bring in the most revenue, and which supplier makes each one?
+    """)
+    return
+
+
+@app.cell
+def _(ask, northwind_database):
+    ask(northwind_database, """
+        SELECT p.ProductName, s.CompanyName AS supplier,
+               round(sum(d.UnitPrice * d.Quantity * (1 - d.Discount)), 2) AS revenue
+        FROM order_details AS d
+        JOIN products AS p ON p.ProductID = d.ProductID
+        JOIN suppliers AS s ON s.SupplierID = p.SupplierID
+        GROUP BY p.ProductName, s.CompanyName
+        ORDER BY revenue DESC
+        LIMIT 10
     """)
     return
 
