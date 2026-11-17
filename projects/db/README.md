@@ -49,7 +49,6 @@ erDiagram
         date valid_to "nullable, null means current"
     }
 
-    CLOSING_PRICES ||--o{ TRADES : priced_at
     CLOSING_PRICES {
         int asset_id PK, FK
         date price_date PK
@@ -60,7 +59,7 @@ erDiagram
         int trade_id PK
         int portfolio_id FK
         int asset_id FK
-        date trade_date FK
+        date trade_date
         string side
         real quantity
         real price_per_unit
@@ -94,4 +93,4 @@ b. Optional relationships. A member may own several portfolios or none, so portf
 
 c. Rules the tables cannot hold. Rules 1 to 6 are held by keys and constraints. My tables cannot hold rule 7, so I check it with a query in Question 7. DuckDB enforces declared PRIMARY KEY, FOREIGN KEY, NOT NULL, UNIQUE and CHECK constraints automatically. Rule 8 cannot be a constraint, because it means adding up earlier trades and a constraint only sees one row. I will check it with a query that keeps a running total of units per portfolio and asset, ordered by trade_date, and lists any sell where the total drops below zero. Rule 2 means there is at most one trade per day for each pair, so the ordering has no ties.
 
-d. Something I changed. The agent's first draft said rule 7 was enforced by a composite foreign key from trades to closing_prices, but the ERD it drew did not show that relationship, and trade_date was not marked as a foreign key. I added the CLOSING_PRICES to TRADES relationship and marked trade_date as FK so the diagram matches the design. I also added the note that DuckDB enforces declared PRIMARY KEY, FOREIGN KEY, NOT NULL, UNIQUE and CHECK constraints automatically, so the rule 7 claim holds without any extra setting.
+d. Something I changed. The agent first suggested holding rule 7 with a foreign key from trades to closing_prices. I dropped it because my data has to break that rule on purpose in two rows, so I check it with a query instead. I also added the note that DuckDB enforces declared PRIMARY KEY, FOREIGN KEY, NOT NULL, UNIQUE and CHECK constraints automatically.
