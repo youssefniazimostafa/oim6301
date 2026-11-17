@@ -14,8 +14,9 @@ def _():
 def _():
     import marimo as mo
     import duckdb
+    import altair as alt
 
-    return duckdb, mo
+    return alt, duckdb, mo
 
 
 @app.cell
@@ -70,7 +71,7 @@ def _(mo):
 
 @app.cell
 def _(ask):
-    ask("""
+    bought = ask("""
         SELECT m.member_id, m.first_name, m.last_name,
                COUNT(DISTINCT p.portfolio_id) AS portfolios,
                ROUND(COALESCE(SUM(CASE WHEN t.side = 'buy' THEN t.quantity * t.price_per_unit END), 0), 2) AS value_bought
@@ -80,7 +81,8 @@ def _(ask):
         GROUP BY m.member_id, m.first_name, m.last_name
         ORDER BY m.member_id
     """)
-    return
+    bought
+    return (bought,)
 
 
 @app.cell(hide_code=True)
@@ -262,7 +264,7 @@ def _(mo):
 
 @app.cell
 def _(as_of, ask):
-    ask(f"""
+    fees = ask(f"""
         SELECT date_trunc('month', trade_date) AS month, SUM(fee) AS total_fees
         FROM trades
         WHERE trade_date >= date_trunc('month', DATE '{as_of}') - INTERVAL 6 MONTH
@@ -270,7 +272,8 @@ def _(as_of, ask):
         GROUP BY month
         ORDER BY month
     """)
-    return
+    fees
+    return (fees,)
 
 
 @app.cell(hide_code=True)
@@ -319,10 +322,49 @@ def _(mo):
     return
 
 
+@app.cell
+def _(ask, bought):
+    q2_total = round(bought["value_bought"].sum(), 2)
+    direct = ask("SELECT ROUND(SUM(quantity * price_per_unit), 2) AS total FROM trades WHERE side = 'buy'")["total"][0]
+    print("Question 2 total:", q2_total)
+    print("Straight from trades:", direct)
+    # Each member's total was rounded to cents, so I allow a few cents of difference.
+    print("Agree:", abs(q2_total - direct) < 0.10)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    The first check adds up the value bought by every member in Question 2 and compares it with the total of all buy trades taken straight from the trades table, so it would print False if my LEFT JOINs had lost or doubled any trades.
+    """)
+    return
+
+
+@app.cell
+def _(ask):
+    ask("""
+        SELECT (SELECT COUNT(*) FROM assets) AS assets,
+               (SELECT COUNT(DISTINCT asset_id) FROM trades) AS traded,
+               (SELECT COUNT(*) FROM assets) - (SELECT COUNT(DISTINCT asset_id) FROM trades) AS never_traded
+    """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    The second check shows that 14 assets minus the 12 assets that appear in trades leaves 2, which matches the two assets that Question 5 found.
+    """)
+    return
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
     ## Working With the Agent
+
+    The agent first built the holdings view by joining only trades and assets. When I compared it with the assignment, I saw that Question 3 has to use three tables or more, so I added portfolios to the view and rebuilt the database. I made this change in the commit "db: holdings view joins portfolios". This is also the Part A change I made after starting Part B.
     """)
     return
 
@@ -337,10 +379,49 @@ def _(mo):
     return
 
 
+@app.cell
+def _(as_of, ask):
+    ask(f"""
+        SELECT COUNT(*) AS joined_rows
+        FROM trades t
+        JOIN portfolios p ON p.portfolio_id = t.portfolio_id
+        JOIN assets a ON a.asset_id = t.asset_id
+        WHERE t.trade_date <= DATE '{as_of}'
+    """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    The joins alone return 352 rows, which matches my prediction. Each trade has exactly one portfolio and one asset through its foreign keys, so the joins did not add or drop any trades, and no trade is after the as_of date.
+
+    One row of the final Question 3 result means one asset held by one portfolio on the as_of date, together with the number of units that portfolio still holds.
+    """)
+    return
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
     ## Going Further
+    """)
+    return
+
+
+@app.cell
+def _(alt, fees):
+    alt.Chart(fees).mark_bar().encode(
+        x=alt.X("yearmonth(month):O", title="Month"),
+        y=alt.Y("total_fees:Q", title="Fees paid ($)"),
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    I tried drawing the fees from Question 9 as a bar chart so I could compare the months side by side. I found that the fees change a lot from month to month, with May and August above $33 while April and June were under $10. The chart is in this Going Further section of questions.py.
     """)
     return
 
