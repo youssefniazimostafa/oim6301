@@ -1,0 +1,21 @@
+portfolio_id,member_id,name,date_created,strategy
+1,1,Carter Portfolio 1,2026-01-06,growth
+2,2,Nguyen Portfolio 1,2025-12-31,dividend income
+3,2,Nguyen Portfolio 2,2026-03-04,dividend income
+4,2,Nguyen Portfolio 3,2026-04-25,
+5,3,Patel Portfolio 1,2025-10-12,crypto mix
+6,3,Patel Portfolio 2,2026-01-26,tech focus
+7,4,Brooks Portfolio 1,2025-11-01,index tracking
+8,4,Brooks Portfolio 2,2025-10-21,tech focus
+9,5,Shah Portfolio 1,2025-12-15,crypto mix
+10,5,Shah Portfolio 2,2026-03-08,dividend income
+11,6,Ramos Portfolio 1,2026-02-25,
+12,6,Ramos Portfolio 2,2025-11-19,crypto mix
+13,7,Rossi Portfolio 1,2025-10-18,growth
+14,8,Kim Portfolio 1,2026-03-19,value
+15,9,Dubois Portfolio 1,2026-04-16,dividend income
+16,10,Haddad Portfolio 1,2025-10-21,value
+17,11,Turner Portfolio 1,2026-05-10,
+18,12,Silva Portfolio 1,2025-10-26,index tracking
+19,13,Sato Portfolio 1,2025-12-11,index tracking
+20,13,Sato Portfolio 2,2026-10-15,crypto mix

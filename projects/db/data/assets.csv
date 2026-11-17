@@ -1,0 +1,15 @@
+asset_id,name,type,sector
+1,Apple,stock,Technology
+2,Microsoft,stock,Technology
+3,Meta Platforms,stock,Communication Services
+4,JPMorgan Chase,stock,Financials
+5,Johnson & Johnson,stock,Health Care
+6,Coca-Cola,stock,Consumer Staples
+7,Exxon Mobil,stock,Energy
+8,Nike,stock,Consumer Discretionary
+9,Ford,stock,Consumer Discretionary
+10,Pfizer,stock,Health Care
+11,SPDR S&P 500 ETF,etf,Broad Market
+12,Invesco QQQ,etf,Technology
+13,Bitcoin,crypto,
+14,Ethereum,crypto,
