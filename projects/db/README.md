@@ -52,7 +52,7 @@ erDiagram
     CLOSING_PRICES {
         int asset_id PK, FK
         date price_date PK
-        real close_price
+        double close_price
     }
 
     TRADES {
@@ -61,9 +61,9 @@ erDiagram
         int asset_id FK
         date trade_date
         string side
-        real quantity
-        real price_per_unit
-        real fee
+        double quantity
+        double price_per_unit
+        double fee
     }
 ```
 
@@ -91,6 +91,6 @@ a. Keys the business already had. Members could be keyed by school email, but I 
 
 b. Optional relationships. A member may own several portfolios or none, so portfolios are optional on the member side, but every portfolio must belong to exactly one member. Assets and portfolios can both have zero trades, since some assets are followed but never traded and a new portfolio has not traded yet. Strategy and sector are nullable because the scenario calls strategy optional and crypto has no sector.
 
-c. Rules the tables cannot hold. Rules 1 to 6 are held by keys and constraints. My tables cannot hold rule 7, so I check it with a query in Question 7. DuckDB enforces declared PRIMARY KEY, FOREIGN KEY, NOT NULL, UNIQUE and CHECK constraints automatically. Rule 8 cannot be a constraint, because it means adding up earlier trades and a constraint only sees one row. I will check it with a query that keeps a running total of units per portfolio and asset, ordered by trade_date, and lists any sell where the total drops below zero. Rule 2 means there is at most one trade per day for each pair, so the ordering has no ties.
+c. Rules the tables cannot hold. Rules 1 to 6 are held by keys and constraints. My tables cannot hold rule 7, so I check it with a query in Question 7. DuckDB enforces declared PRIMARY KEY, FOREIGN KEY, NOT NULL, UNIQUE and CHECK constraints automatically. Rule 8 cannot be a constraint, because it means adding up earlier trades and a constraint only sees one row. I check it in Question 8 with a query that, for each sell, adds up the units that portfolio bought and sold of that asset up to that date, and lists any sell where the total is below zero.
 
-d. Something I changed. The agent first suggested holding rule 7 with a foreign key from trades to closing_prices. I dropped it because my data has to break that rule on purpose in two rows, so I check it with a query instead. I also added the note that DuckDB enforces declared PRIMARY KEY, FOREIGN KEY, NOT NULL, UNIQUE and CHECK constraints automatically.
+d. Something I changed. The agent first suggested holding rule 7 with a foreign key from trades to closing_prices. I dropped it because my data has to break that rule on purpose in two rows, so I check it with a query instead.

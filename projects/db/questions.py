@@ -287,7 +287,7 @@ def _(mo):
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
-    ## Question 10: Which 3 assets did the club trade the most over the year?
+    ## Question 10: Which portfolios made more trades than the average portfolio over the year?
     """)
     return
 
@@ -295,13 +295,15 @@ def _(mo):
 @app.cell
 def _(as_of, ask):
     ask(f"""
-        SELECT a.name, a.type, ROUND(SUM(t.quantity * t.price_per_unit), 2) AS value_traded
+        SELECT p.portfolio_id, p.name, COUNT(*) AS trades
         FROM trades t
-        JOIN assets a ON a.asset_id = t.asset_id
+        JOIN portfolios p ON p.portfolio_id = t.portfolio_id
         WHERE t.trade_date > DATE '{as_of}' - INTERVAL 1 YEAR AND t.trade_date <= DATE '{as_of}'
-        GROUP BY a.name, a.type
-        ORDER BY value_traded DESC
-        LIMIT 3
+        GROUP BY p.portfolio_id, p.name
+        HAVING COUNT(*) > (SELECT COUNT(*) FROM trades
+                           WHERE trade_date > DATE '{as_of}' - INTERVAL 1 YEAR AND trade_date <= DATE '{as_of}')
+                          / (SELECT COUNT(*) FROM portfolios)
+        ORDER BY trades DESC
     """)
     return
 
@@ -309,7 +311,7 @@ def _(as_of, ask):
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
-    The three most traded assets over the year were Meta Platforms ($455,395.06), Microsoft ($202,908.70) and JPMorgan Chase ($132,628.46), and all three are stocks.
+    Over the year, 11 of the 20 portfolios made more trades than the average of 17.6 trades per portfolio, and Haddad Portfolio 1 made the most with 27 trades, where the average counts the portfolio with no trades as 0.
     """)
     return
 
