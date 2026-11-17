@@ -6,7 +6,7 @@ I chose Scenario B: Babson Investment Club. The club runs paper (practice)
 portfolios so members can learn investing without real money, but today
 everything lives in a shared spreadsheet and broker screenshots. The database
 needs to give a clear, trustworthy history of every trade, plus a way to see
-what each portfolio holds and what it is worth on any given day.
+what each portfolio holds.
 
 ## The ERD
 
@@ -87,10 +87,10 @@ day.
 
 ## Design Choices
 
-a. Keys the business already had. Members could be keyed by school email, but I used a surrogate member_id and made email UNIQUE NOT NULL, because an email can change and is long to repeat as a foreign key in portfolios. Assets cannot use the ticker as a key at all, since a ticker can change while the asset stays the same (Facebook to META). So assets get a surrogate asset_id, and tickers live in asset_tickers with valid_from and valid_to, which lets both tickers point at the same asset.
+a. Keys the business already had. I could have used each member's school email as their ID, but emails can change, so I gave every member a simple number instead and made sure no two members share an email. Tickers cannot be IDs either, because a ticker can change while the company stays the same, like Facebook becoming META. So every asset has its own number, and its tickers go in a separate table with the dates each one was used.
 
-b. Optional relationships. A member may own several portfolios or none, so portfolios are optional on the member side, but every portfolio must belong to exactly one member. Assets and portfolios can both have zero trades, since some assets are followed but never traded and a new portfolio has not traded yet. Strategy and sector are nullable because the scenario calls strategy optional and crypto has no sector.
+b. Optional relationships. The scenario says a member can own several portfolios or none, so a member does not need a portfolio, but every portfolio must belong to one member. Some assets are followed but never traded, and a new portfolio may not have traded yet, so neither needs to have trades. Strategy and sector can be left blank, because the scenario says strategy is optional and crypto has no sector.
 
-c. Rules the tables cannot hold. Rules 1 to 6 are held by keys and constraints. My tables cannot hold rule 7, so I check it with a query in Question 7. DuckDB enforces declared PRIMARY KEY, FOREIGN KEY, NOT NULL, UNIQUE and CHECK constraints automatically. Rule 8 cannot be a constraint, because it means adding up earlier trades and a constraint only sees one row. I check it in Question 8 with a query that, for each sell, adds up the units that portfolio bought and sold of that asset up to that date, and lists any sell where the total is below zero.
+c. Rules the tables cannot hold. The database itself stops most rule breaks. For example, it refuses a trade with a negative quantity, and it refuses a second trade by the same portfolio in the same asset on the same day. It cannot hold two rules, so I check those with queries instead. Question 7 finds trades on a day with no closing price. Question 8 finds sells of more units than the portfolio held at the time. A table rule only looks at one row, and this one needs all the earlier trades added up.
 
-d. Something I changed. The agent first suggested holding rule 7 with a foreign key from trades to closing_prices. I dropped it because my data has to break that rule on purpose in two rows, so I check it with a query instead.
+d. Something I changed. The agent first suggested making the database refuse any trade on a day with no closing price. I did not keep that, because the assignment asks my data to break that rule on purpose in two rows. So I check it with a query in Question 7 instead.
