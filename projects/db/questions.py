@@ -336,7 +336,7 @@ def _(ask, bought):
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
-    The first check adds up the value bought by every member in Question 2 and compares it with the total of all buy trades taken straight from the trades table, so it would print False if my LEFT JOINs had lost or doubled any trades.
+    The first check adds up the value bought by every member in Question 2 and compares it with the total of all buy trades taken straight from the trades table, so it would print False if my LEFT JOINs had lost or doubled any trades. The totals differ by one cent because Question 2 rounds each member's total before adding them up, so the check accepts a difference under 10 cents, and a lost or doubled trade would be off by far more.
     """)
     return
 
