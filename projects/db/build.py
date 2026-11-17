@@ -97,11 +97,12 @@ def _(duckdb, mo):
 
         _con.sql("""
             CREATE VIEW holdings AS
-            SELECT t.portfolio_id, t.asset_id, a.name AS asset_name,
+            SELECT t.portfolio_id, p.name AS portfolio_name, t.asset_id, a.name AS asset_name,
                    ROUND(SUM(CASE WHEN t.side = 'buy' THEN t.quantity ELSE -t.quantity END), 4) AS units
             FROM trades t
+            JOIN portfolios p ON p.portfolio_id = t.portfolio_id
             JOIN assets a ON a.asset_id = t.asset_id
-            GROUP BY t.portfolio_id, t.asset_id, a.name
+            GROUP BY t.portfolio_id, p.name, t.asset_id, a.name
             HAVING units > 0
         """)
 
